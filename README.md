@@ -15,11 +15,13 @@ More information:
 - Solana RPC Endpoint
 - Solana Private Key for signing transactions
 - Jito Private Key for auth to block engine API (optional)
+- Terraform (optional)
+- DigitalOcean API Key (optional)
 
 Drift account is setup according to: https://docs.drift.trade/keeper-bots.  
 The account can also be set up using the trading app: https://app.drift.trade/.  
 
-## Setup
+## Configure
 
 Create .env file from example and configure all environment variables.
 
@@ -27,9 +29,11 @@ Create .env file from example and configure all environment variables.
 cp example.env .env
 ```
 
+Adjust `config.yaml` as you please.
+
 ## Build
 
-Clone the keeper-bots repository and build the Docker image.
+Clone the [keeper-bots-v2](https://github.com/drift-labs/keeper-bots-v2/) repository and build the Docker image.
 
 ```
 ./ctl.sh image build
@@ -42,6 +46,24 @@ Run the bot.
 ```
 docker compose up
 ```
+
+## Deploy
+
+Provision a DigitalOcean Droplet and deploy Keeper Bot with current configuration (.env and config.yaml).
+By default ~/.ssh/id_rsa.pub is added to DigitalOcean and the Droplet.
+
+```
+terraform init
+terraform apply
+```
+
+Wait until Droplet is up and the `droplet_ip` is printed. You may connect to the Droplet using
+
+```
+ssh root@droplet_ip
+```
+
+In case somethin went wrong with the provisioning, check the cloud-init-output log at `/var/log/cloud-init-output.log`.
 
 ## Metrics
 

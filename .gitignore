@@ -1,2 +1,9 @@
+# Bot
 .env
 .build/
+
+# Terraform
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+values.auto.tfvars
