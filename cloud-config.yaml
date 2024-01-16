@@ -34,7 +34,7 @@ runcmd:
   - git clone https://github.com/0x1d/drift-keeper /app/bot
   - mv /app/.env /app/bot/.env
   - mv /app/config.yaml /app/bot/config.yaml
-  - cd /app/bot && docker-compose up -d
+  - cd /app/bot && sudo -u keeper -g bot -- docker-compose up -d
 
 write_files:
   - path: /app/.env

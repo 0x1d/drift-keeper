@@ -149,7 +149,7 @@
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "diff"
           ],
           "fields": "",
           "values": false
@@ -166,7 +166,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "delta(total_collateral[24h])",
+          "expr": "total_collateral",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -176,7 +176,7 @@
           "useBackend": false
         }
       ],
-      "title": "Profit 24h",
+      "title": "PNL",
       "type": "stat"
     },
     {
@@ -299,7 +299,7 @@
           "mode": "scheme",
           "reverse": false,
           "scale": "exponential",
-          "scheme": "Turbo",
+          "scheme": "Viridis",
           "steps": 64
         },
         "exemplars": {
@@ -436,7 +436,7 @@
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": false
         },
         "tooltip": {
           "mode": "single",
@@ -538,7 +538,7 @@
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": false
         },
         "tooltip": {
           "mode": "single",
@@ -957,6 +957,6 @@
   "timezone": "",
   "title": "Drift Keeper",
   "uid": "f4c3a630-ffd0-41c8-a36a-52e0771b77fb",
-  "version": 7,
+  "version": 6,
   "weekStart": ""
 }
