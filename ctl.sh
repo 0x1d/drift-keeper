@@ -5,6 +5,30 @@ API_ENDPOINT=https://api.mainnet-beta.solana.com/
 
 source .env
 
+function image {
+    function build {
+        mkdir -p .build
+        git clone https://github.com/drift-labs/keeper-bots-v2 -b mainnet-beta .build/keeper-bots-v2
+        docker build -f Dockerfile -t ${DOCKER_IMAGE} .build/keeper-bots-v2
+        rm -rf .build
+    }
+    function push {
+        docker push ${DOCKER_IMAGE}
+    }
+    ${@:-}
+}
+
+function droplet {
+    function provision {
+        terraform init
+        terraform apply
+    }
+    function connect {
+        ssh keeper@$(terraform output -raw droplet_ip)
+    }
+    ${@:-}
+}
+
 function balance {
     function sol {
         local addr=${1:-$WALLET_ADDRESS}
@@ -37,19 +61,6 @@ function balance {
         }' | jq .result.value[0].account.data.parsed.info.tokenAmount.uiAmount)
         echo ${balance}
 
-    }
-    ${@:-}
-}
-
-function image {
-    function build {
-        mkdir -p .build
-        git clone https://github.com/drift-labs/keeper-bots-v2 -b mainnet-beta .build/keeper-bots-v2
-        docker build -f Dockerfile -t ${DOCKER_IMAGE} .build/keeper-bots-v2
-        rm -rf .build
-    }
-    function push {
-        docker push ${DOCKER_IMAGE}
     }
     ${@:-}
 }

@@ -19,7 +19,7 @@ More information:
 - DigitalOcean API Key (optional)
 
 Drift account is setup according to: https://docs.drift.trade/keeper-bots.  
-The account can also be set up using the trading app: https://app.drift.trade/.  
+The account can also be set up using the DEX app: https://app.drift.trade/.  
 
 ## Configure
 
@@ -53,14 +53,13 @@ Provision a DigitalOcean Droplet and deploy Keeper Bot with current configuratio
 By default ~/.ssh/id_rsa.pub is added to DigitalOcean and the Droplet.
 
 ```
-terraform init
-terraform apply
+./ctl.sh droplet provision
 ```
 
 Wait until Droplet is up and the `droplet_ip` is printed. You may connect to the Droplet using
 
 ```
-ssh root@droplet_ip
+./ctl.sh droplet connect
 ```
 
 In case somethin went wrong with the provisioning, check the cloud-init-output log at `/var/log/cloud-init-output.log`.
