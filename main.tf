@@ -10,8 +10,9 @@ terraform {
 variable "do_token" {}
 variable "config" {
   default = {
-    ntp_server       = "ntp.amsterdam.jito.wtf"
-    docker_image     = "wirelos/drift-keeper:mainnet-beta"
+    region       = "ams3"
+    ntp_server   = "ntp.amsterdam.jito.wtf"
+    docker_image = "wirelos/drift-keeper:mainnet-beta"
   }
 }
 
@@ -35,12 +36,12 @@ resource "digitalocean_ssh_key" "default" {
 resource "digitalocean_droplet" "keeper" {
   image     = "ubuntu-23-10-x64"
   name      = "drift-keeper"
-  region    = "ams3"
+  region    = var.config.region
   size      = "s-1vcpu-1gb-intel"
   ssh_keys  = [digitalocean_ssh_key.default.fingerprint]
   user_data = local.user_data
 }
 
 output "droplet_ip" {
-    value = digitalocean_droplet.keeper.ipv4_address
+  value = digitalocean_droplet.keeper.ipv4_address
 }

@@ -24,7 +24,7 @@ function droplet {
         terraform apply
     }
     function connect {
-        ssh keeper@$(terraform output -raw droplet_ip)
+        ssh root@$(terraform output -raw droplet_ip)
     }
     ${@:-}
 }

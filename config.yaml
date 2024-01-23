@@ -36,7 +36,7 @@ global:
   eventSubscriberPollingInterval: 5000
   bulkAccountLoaderPollingInterval: 5000
 
-  useJito: true
+  useJito: false
   jitoBlockEngineUrl:
   jitoAuthPrivateKey:
 
@@ -58,6 +58,7 @@ enabledBots:
 
   # Trigger bot (triggers trigger orders)
   #- trigger
+  
   # Liquidator bot, liquidates unhealthy positions by taking over the risk (caution, you should manage risk here)
   # - liquidator
 
@@ -77,12 +78,6 @@ enabledBots:
 
   # below are bot configs
 botConfigs:
-  floatingMaker:
-    botId: "floatingMaker"
-    dryRun: false
-    fillerPollingInterval: 6000
-    metricsPort: 9464
-    revertOnFailure: true
 
   fillerLite:
     botId: "fillerLite"
@@ -90,6 +85,7 @@ botConfigs:
     fillerPollingInterval: 6000
     metricsPort: 9464
     revertOnFailure: true
+    simulateTxForCUEstimate: true
 
   filler:
     botId: "filler"
@@ -102,16 +98,22 @@ botConfigs:
     # Default is true
     revertOnFailure: true
 
+    # calls simulateTransaction before sending to get an accurate CU estimate
+    # as well as stop before sending the transaction (Default is true)
+    simulateTxForCUEstimate: true
+
   spotFiller:
     botId: "spot-filler"
     dryRun: false
     fillerPollingInterval: 6000
-    metricsPort: 9466
+    metricsPort: 9465
+    revertOnFailure: true
+    simulateTxForCUEstimate: true
 
   liquidator:
     botId: "liquidator"
     dryRun: false
-    metricsPort: 9465
+    metricsPort: 9466
     # if true will NOT attempt to sell off any inherited positions
     disableAutoDerisking: false
     # if true will swap spot assets on jupiter if the price is better
