@@ -49,7 +49,7 @@ docker compose up
 
 ## Deploy
 
-Provision a DigitalOcean Droplet and deploy Keeper Bot with current configuration (.env and config.yaml).
+Provision a DigitalOcean Droplet and deploy Keeper Bot with current configuration (.env and config.yaml).  
 By default ~/.ssh/id_rsa.pub is added to DigitalOcean and the Droplet.
 
 ```
@@ -66,5 +66,9 @@ In case somethin went wrong with the provisioning, check the cloud-init-output l
 
 ## Metrics
 
-The bot exposes Prometheus metrics that are automatically scraped.  
-A Grafana dashboard is exposed on http://localhost:3000 with default username/password: grafana/admin.
+There are several metrics endpoints available that are periodically scraped by Prometheus:
+- http://keeper:9464/metrics
+- http://wallet-tracker:3000/metrics
+- http://node-exporter:9100/metrics
+
+A Grafana dashboard is exposed on http://localhost:3000 with default username/password: admin/grafana.
