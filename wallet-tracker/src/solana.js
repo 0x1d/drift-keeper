@@ -39,6 +39,12 @@ async function loadUSDCBalance(walletAddress) {
     return json;
 }
 
+async function loadSolanaMarketData() {
+    const response = await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=solana");
+    const json = await response.json();
+    return json;
+}
+
 // extract wallet balance
 function extractWalletBalance(walletBalance) {
     return walletBalance.result.value / LAMPORTS_PER_SOL;
@@ -49,10 +55,17 @@ function extractUSDCBalance(usdcBalance) {
     return usdcBalance.result.value[0].account.data.parsed.info.tokenAmount.uiAmount;
 }
 
+// extract SOL price
+function extractSOLPrice(marketData) {
+    return marketData[0].current_price;
+}
+
 // export functions
 module.exports = {
     loadWalletBalance,
     loadUSDCBalance,
+    loadSolanaMarketData,
     extractWalletBalance,
-    extractUSDCBalance
+    extractUSDCBalance,
+    extractSOLPrice
 };

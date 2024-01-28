@@ -36,7 +36,7 @@ Adjust `config.yaml` as you please.
 Clone the [keeper-bots-v2](https://github.com/drift-labs/keeper-bots-v2/) repository and build the Docker image.
 
 ```
-./ctl.sh image build
+./ctl.sh keeper build
 ```
 
 ## Run

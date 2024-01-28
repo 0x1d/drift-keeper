@@ -5,7 +5,7 @@ API_ENDPOINT=https://api.mainnet-beta.solana.com/
 
 source .env
 
-function image {
+function keeper {
     function build {
         mkdir -p .build
         git clone https://github.com/drift-labs/keeper-bots-v2 -b mainnet-beta .build/keeper-bots-v2
@@ -14,6 +14,18 @@ function image {
     }
     function push {
         docker push ${DOCKER_IMAGE}
+    }
+    ${@:-}
+}
+
+function tracker {
+    function build {
+        pushd wallet-tracker
+            docker build -t ${DOCKER_IMAGE_WALLET_TRACKER} .
+        popd
+    }
+    function push {
+        docker push ${DOCKER_IMAGE_WALLET_TRACKER}
     }
     ${@:-}
 }

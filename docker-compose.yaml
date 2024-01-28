@@ -15,6 +15,12 @@ services:
   # ---------------------------------------------------
   # Monitoring
   # ---------------------------------------------------
+  wallet-tracker:
+    image: ${DOCKER_IMAGE_WALLET_TRACKER}
+    build:
+      context: wallet-tracker
+    env_file: .env
+    restart: unless-stopped
   prometheus:
     image: prom/prometheus
     container_name: prometheus
