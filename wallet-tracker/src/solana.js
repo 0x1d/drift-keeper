@@ -1,5 +1,7 @@
 const LAMPORTS_PER_SOL = 1000000000;
 const SOLANA_RPC = "https://api.mainnet-beta.solana.com/";
+const JUPITER_PRICE_API = "https://price.jup.ag/v4/price?ids=SOL"
+
 const rpcRequestHeaders = {
     "Content-Type": "application/json",
 };
@@ -40,7 +42,7 @@ async function loadUSDCBalance(walletAddress) {
 }
 
 async function loadSolanaMarketData() {
-    const response = await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=solana");
+    const response = await fetch(JUPITER_PRICE_API);
     const json = await response.json();
     return json;
 }
@@ -57,7 +59,7 @@ function extractUSDCBalance(usdcBalance) {
 
 // extract SOL price
 function extractSOLPrice(marketData) {
-    return marketData[0].current_price;
+    return marketData.data.SOL.price;
 }
 
 // export functions
