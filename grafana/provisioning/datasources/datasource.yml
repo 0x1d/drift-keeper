@@ -10,4 +10,4 @@ datasources:
   basicAuth: true
   basicAuthUser: prom
   secureJsonData:
-    basicAuthPassword: prompass
+    basicAuthPassword: ${PROMETHEUS_PASSWORD}

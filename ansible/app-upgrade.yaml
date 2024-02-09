@@ -1,0 +1,10 @@
+- hosts: bots
+  remote_user: root
+  become: true
+  tasks:
+    - name: Upgrade Containers
+      shell: |
+        cd /app/bot
+        docker-compose down
+        docker-compose pull
+        sudo -u keeper -g bot -- docker-compose up -d

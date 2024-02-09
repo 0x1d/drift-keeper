@@ -6,17 +6,17 @@ const createMetrics = () => {
     const solBalanceMetric = new client.Gauge({
         name: "sol_balance",
         help: "SOL Balance",
-        labelNames: ['wallet']
+        labelNames: ['wallet','walletShort']
     });
     const usdcBalanceMetric = new client.Gauge({
         name: "usdc_balance",
         help: "USDC Balance",
-        labelNames: ['wallet']
+        labelNames: ['wallet','walletShort']
     });
     const solUsdcBalanceMetric = new client.Gauge({
         name: "sol_usdc_balance",
         help: "SOL Balance in USDC",
-        labelNames: ['wallet']
+        labelNames: ['wallet','walletShort']
     });
 
     registry.registerMetric(usdcBalanceMetric);

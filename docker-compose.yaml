@@ -51,12 +51,10 @@ services:
   grafana:
     image: grafana/grafana
     container_name: grafana
+    env_file: .env.monitoring
     ports:
       - 3000:3000
     restart: unless-stopped
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning
       - ./grafana/dashboards:/var/lib/grafana/dashboards

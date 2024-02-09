@@ -1,0 +1,10 @@
+- hosts: bots
+  remote_user: root
+  become: true
+  tasks:
+    - name: Upgrade System
+      shell: |
+        apt update
+        apt upgrade -y
+    - name: Reboot
+      reboot:

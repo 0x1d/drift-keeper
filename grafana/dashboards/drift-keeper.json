@@ -260,8 +260,9 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "continuous-GrYlRd"
+            "mode": "continuous-RdYlGr"
           },
+          "displayName": "${__field.labels.walletShort}",
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -291,7 +292,7 @@
         "colorMode": "value",
         "graphMode": "area",
         "justifyMode": "auto",
-        "orientation": "auto",
+        "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -335,6 +336,7 @@
           "color": {
             "mode": "continuous-RdYlGr"
           },
+          "displayName": "${__field.labels.walletShort}",
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -364,7 +366,7 @@
         "colorMode": "value",
         "graphMode": "area",
         "justifyMode": "auto",
-        "orientation": "auto",
+        "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -408,6 +410,7 @@
           "color": {
             "mode": "continuous-RdYlGr"
           },
+          "displayName": "${__field.labels.walletShort}",
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -437,7 +440,7 @@
         "colorMode": "value",
         "graphMode": "area",
         "justifyMode": "auto",
-        "orientation": "auto",
+        "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -622,9 +625,10 @@
               "mode": "none"
             },
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "dashed"
             }
           },
+          "displayName": "${__field.labels.walletShort}",
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -635,7 +639,7 @@
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 0.1
               }
             ]
           }
@@ -654,7 +658,7 @@
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": false
+          "showLegend": true
         },
         "tooltip": {
           "mode": "single",
@@ -721,9 +725,10 @@
               "mode": "none"
             },
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "dashed"
             }
           },
+          "displayName": "${__field.labels.walletShort}",
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -734,7 +739,15 @@
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 10
+              },
+              {
+                "color": "#EAB839",
+                "value": 20
+              },
+              {
+                "color": "#6ED0E0",
+                "value": 30
               }
             ]
           }
@@ -753,7 +766,7 @@
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": false
+          "showLegend": true
         },
         "tooltip": {
           "mode": "single",
@@ -823,6 +836,7 @@
               "mode": "off"
             }
           },
+          "displayName": "${__field.labels.walletShort}",
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -852,7 +866,7 @@
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": false
+          "showLegend": true
         },
         "tooltip": {
           "mode": "single",
@@ -1484,13 +1498,13 @@
     "list": []
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Drift Keeper",
   "uid": "f4c3a630-ffd0-41c8-a36a-52e0771b77fb",
-  "version": 6,
+  "version": 4,
   "weekStart": ""
 }

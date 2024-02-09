@@ -5,6 +5,42 @@ API_ENDPOINT=https://api.mainnet-beta.solana.com/
 
 source .env
 
+##
+## Usage: ./ctl.sh COMMAND SUBCOMMAND
+##
+## ~> keeper
+##    build             Build bot image
+##    push              Push bot image to Docker registry
+##
+## ~> tracker
+##    build             Build wallet tracker image
+##    push              Push tracker image to Docker registry
+##
+## ~> infra
+##    plan              Plan infrastructure change
+##    provision         Provision infrastructure
+##    hosts             Show list of servers
+##    connect           Connect to a server
+##    playbook          Run a playbook
+##
+## ~> balance
+##    sol               Show SOL balance
+##    usdc              Show USDC balance
+##
+
+RED="31"
+GREEN="32"
+GREENBLD="\e[1;${GREEN}m"
+REDBOLD="\e[1;${RED}m"
+REDITALIC="\e[3;${RED}m"
+EC="\e[0m"
+
+function info {
+    printf "\n${GREENBLD}Wallet Address:\t$WALLET_ADDRESS${EC}\n"
+    printf "${GREENBLD}Environment:\t$ENV${EC}\n"
+    sed -n 's/^##//p' ctl.sh
+}
+
 function keeper {
     function build {
         mkdir -p .build
@@ -30,13 +66,30 @@ function tracker {
     ${@:-}
 }
 
-function droplet {
+function infra {
+    function plan {
+        terraform init
+        terraform plan
+    }
     function provision {
         terraform init
         terraform apply
+        echo "[bots]" > inventory.cfg
+        terraform output -json | jq --raw-output ' .instances.value | to_entries[] | .value' >> inventory.cfg
+    }
+    function hosts {
+        terraform output -json | jq --raw-output  '.instances.value | to_entries[] | [.key, .value] | @tsv'
     }
     function connect {
-        ssh root@$(terraform output -raw droplet_ip)
+        infra hosts \
+        | fzf --height=~10 \
+        | awk '{print $2}' \
+        | xargs -o ssh -l root $@
+    }
+    function playbook {
+        pushd ansible
+            ansible-playbook -i ../inventory.cfg $(fzf --height=~10)
+        popd
     }
     ${@:-}
 }
@@ -77,4 +130,18 @@ function balance {
     ${@:-}
 }
 
-${@:-}
+function repl {
+    clear
+    cat motd
+    info
+    echo -e "\n${REDBOLD}Enter command...${EC}"
+    read -p '~> ';
+    clear
+    cat motd
+    ./ctl.sh ${REPLY}
+    printf "\n"
+	read -p "Press any key to continue."
+    repl
+}
+
+${@:-info}

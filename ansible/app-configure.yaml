@@ -1,0 +1,24 @@
+- hosts: bots
+  remote_user: root
+  become: true
+  tasks:
+    - name: Stop Containers
+      shell: |
+        cd /app/bot
+        docker-compose down
+    - name: Configure Grafana
+      copy:
+        src: ../grafana
+        dest: /app/bot
+    - name: Configure Prometheus
+      copy:
+        src: ../prometheus
+        dest: /app/bot
+    - name: Configure Bot
+      copy:
+        src: ../config.yaml
+        dest: /app/bot      
+    - name: Start Containers
+      shell: |
+        cd /app/bot
+        sudo -u keeper -g bot -- docker-compose up -d
