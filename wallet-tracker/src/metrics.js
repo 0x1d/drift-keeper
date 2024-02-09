@@ -19,11 +19,17 @@ const createMetrics = () => {
         labelNames: ['wallet','walletShort']
     });
 
+    const solPriceMetric = new client.Gauge({
+        name: "sol_price",
+        help: "SOL Price in USDC"
+    });
+
     registry.registerMetric(usdcBalanceMetric);
     registry.registerMetric(solBalanceMetric);
     registry.registerMetric(solUsdcBalanceMetric);
+    registry.registerMetric(solPriceMetric);
 
-    return [registry, usdcBalanceMetric, solBalanceMetric, solUsdcBalanceMetric];
+    return [registry, usdcBalanceMetric, solBalanceMetric, solUsdcBalanceMetric, solPriceMetric];
 };
 
 module.exports = {

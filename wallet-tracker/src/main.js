@@ -3,7 +3,7 @@ const { createMetrics } = require('./metrics');
 const { loadWalletBalance, loadUSDCBalance, loadSolanaMarketData, extractWalletBalance, extractUSDCBalance, extractSOLPrice } = require('./solana');
 
 const WALLET_ADDRESS = process.env.WALLET_ADDRESS;
-const [registry, usdcBalanceMetric, solBalanceMetric, solUsdcBalanceMetric] = createMetrics();
+const [registry, usdcBalanceMetric, solBalanceMetric, solUsdcBalanceMetric, solPriceMetric] = createMetrics();
 const app = express();
 
 const trimWalletAddress = (walletAddress) => {
@@ -27,6 +27,7 @@ app.get('/metrics/:addr?', async (req, res) => {
     solBalanceMetric.set(label, extractWalletBalance(solBalance));
     usdcBalanceMetric.set(label, extractUSDCBalance(usdcBalance));
     solUsdcBalanceMetric.set(label, extractWalletBalance(solBalance) * extractSOLPrice(marketData));
+    solPriceMetric.set(extractSOLPrice(marketData));
 
     res.send(await registry.metrics());
 });
