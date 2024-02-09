@@ -26,8 +26,8 @@ variable "bot" {
 variable "monitoring" {
   description = "Monitoring configuration"
   default = {
-    grafana_user = "admin"
-    grafana_password = "grafana"
+    grafana_user        = "admin"
+    grafana_password    = "grafana"
     prometheus_password = "prompass"
   }
   type = object({
@@ -109,7 +109,7 @@ resource "linode_instance" "keeper" {
       env_file = base64encode(templatefile("env.tpl", merge(var.bot, {
         jito_block_engine_url = each.value.jito_block_engine_url
       })))
-      config_file = base64encode(templatefile("config.yaml", {
+      config_file = base64encode(templatefile("config.yaml.tpl", {
         use_jito = each.value.use_jito
       }))
       prometheus_config = base64encode(templatefile("prometheus/prometheus.yml.tpl", {
@@ -121,7 +121,11 @@ resource "linode_instance" "keeper" {
     }))
   }
   lifecycle {
-    ignore_changes = [ metadata ]
+    ignore_changes = [
+      # usage of bcrypt will always trigger a change in the metadata
+      # the user_data / cloud-init config is anyway only applied on first-boot
+      metadata
+    ]
   }
 }
 
