@@ -10,8 +10,8 @@ const trimWalletAddress = (walletAddress) => {
     return `${walletAddress.slice(0,4)}...${walletAddress.slice(walletAddress.length-4, walletAddress.length)}`;
 }
 
-app.get('/metrics/:addr', async (req, res) => {
-    const walletAddress = req.params.addr;
+app.get('/metrics/:addr?', async (req, res) => {
+    const walletAddress = req.params.addr || WALLET_ADDRESS;
     console.log(`Gathering metrics for ${walletAddress}`);
     res.setHeader('Content-Type', registry.contentType);
     

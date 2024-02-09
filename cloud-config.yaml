@@ -31,7 +31,7 @@ ntp:
     - ${ntp_server}
 
 runcmd:
-  - git clone https://github.com/0x1d/drift-keeper /app/bot
+  - git clone -b feature/scaling https://github.com/0x1d/drift-keeper /app/bot
   - cp -rT /transfer /app/bot && rm -rf /transfer
   - chown -R keeper:bot /app/bot
   - cd /app/bot && sudo -u keeper -g bot -- docker-compose up -d
