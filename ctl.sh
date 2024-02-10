@@ -10,7 +10,7 @@ source .env
 ##
 ## ~> build
 ##    keeper            Build bot image
-##    tracker           Buils wallet-tracker image
+##    tracker           Build wallet-tracker image
 ##
 ## ~> push
 ##    keeper            Push bot image to Docker registry
@@ -94,7 +94,7 @@ function infra {
     }
     function playbook {
         pushd ansible
-            ansible-playbook -i ../inventory.cfg $(fzf --height=~10)
+            ansible-playbook --ssh-common-args='-o StrictHostKeyChecking=accept-new' -i ../inventory.cfg $(fzf --height=~10)
         popd
     }
     ${@:-}
