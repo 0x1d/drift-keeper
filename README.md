@@ -1,23 +1,10 @@
-```
-
-▓█████▄  ██▀███   ██▓  █████▒▄▄▄█████▓    ██ ▄█▀▓█████ ▓█████  ██▓███  ▓█████  ██▀███  
-▒██▀ ██▌▓██ ▒ ██▒▓██▒▓██   ▒ ▓  ██▒ ▓▒    ██▄█▒ ▓█   ▀ ▓█   ▀ ▓██░  ██▒▓█   ▀ ▓██ ▒ ██▒
-░██   █▌▓██ ░▄█ ▒▒██▒▒████ ░ ▒ ▓██░ ▒░   ▓███▄░ ▒███   ▒███   ▓██░ ██▓▒▒███   ▓██ ░▄█ ▒
-░▓█▄   ▌▒██▀▀█▄  ░██░░▓█▒  ░ ░ ▓██▓ ░    ▓██ █▄ ▒▓█  ▄ ▒▓█  ▄ ▒██▄█▓▒ ▒▒▓█  ▄ ▒██▀▀█▄  
-░▒████▓ ░██▓ ▒██▒░██░░▒█░      ▒██▒ ░    ▒██▒ █▄░▒████▒░▒████▒▒██▒ ░  ░░▒████▒░██▓ ▒██▒
- ▒▒▓  ▒ ░ ▒▓ ░▒▓░░▓   ▒ ░      ▒ ░░      ▒ ▒▒ ▓▒░░ ▒░ ░░░ ▒░ ░▒▓▒░ ░  ░░░ ▒░ ░░ ▒▓ ░▒▓░
- ░ ▒  ▒   ░▒ ░ ▒░ ▒ ░ ░          ░       ░ ░▒ ▒░ ░ ░  ░ ░ ░  ░░▒ ░      ░ ░  ░  ░▒ ░ ▒░
- ░ ░  ░   ░░   ░  ▒ ░ ░ ░      ░         ░ ░░ ░    ░      ░   ░░          ░     ░░   ░ 
-   ░       ░      ░                      ░  ░      ░  ░   ░  ░            ░  ░   ░     
- ░                                                                                     
-```
-
 # Drift Keeper Bot
 
 > Keeper Bots in the Drift Protocol keep the protocol operational by performing automated actions as autonomous off-chain agents. Keepers are rewarded depending on the duties that they perform.
 
-This repository contains tools to build, run and monitor Keeper bots for Drift on Solana.
-
+This repository contains tools to build, run and monitor Keeper bots for Drift on Solana.  
+Checkout my article about all that stuff: https://nitro.dcentral.systems/drift-keeper-bot  
+  
 More information:
 - https://github.com/drift-labs/keeper-bots-v2/
 - https://docs.drift.trade/keeper-bots
