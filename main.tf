@@ -11,41 +11,6 @@ terraform {
   }
 }
 
-variable "do_token" {
-  description = "DigitalOcean access token"
-  type = string
-}
-
-variable "linode_token" {
-  description = "Linode access token"
-  type        = string
-}
-
-variable "bot" {
-  description = "Bot configuration"
-  type = object({
-    wallet_address     = string
-    rpc_endpoint       = string
-    ws_endpoint        = string
-    keeper_private_key = string
-    jito_private_key   = string
-  })
-}
-
-variable "monitoring" {
-  description = "Monitoring configuration"
-  default = {
-    grafana_user        = "admin"
-    grafana_password    = "grafana"
-    prometheus_password = "prompass"
-  }
-  type = object({
-    grafana_user        = string
-    grafana_password    = string
-    prometheus_password = string
-  })
-}
-
 provider "digitalocean" {
   token = var.do_token
 }
@@ -68,68 +33,6 @@ locals {
       prometheus_password_bcrypt = bcrypt(var.monitoring.prometheus_password)
     }))
   }
-  instances_linode = [
-    {
-      label                 = "DK-LN-AMS"
-      group                 = "keeper"
-      image                 = "linode/ubuntu23.10"
-      region                = "nl-ams"
-      type                  = "g6-standard-1"
-      ntp_server            = "ntp.amsterdam.jito.wtf"
-      jito_block_engine_url = "amsterdam.mainnet.block-engine.jito.wtf"
-      use_jito              = true
-    },
-    {
-      label                 = "DK-LN-FRA"
-      group                 = "keeper"
-      image                 = "linode/ubuntu23.10"
-      region                = "nl-ams"
-      type                  = "g6-standard-1"
-      ntp_server            = "ntp.frankfurt.jito.wtf"
-      jito_block_engine_url = "frankfurt.mainnet.block-engine.jito.wtf"
-      use_jito              = true
-    },
-    {
-      label                 = "DK-LN-OSA"
-      group                 = "keeper"
-      image                 = "linode/ubuntu23.10"
-      region                = "jp-osa"
-      type                  = "g6-standard-1"
-      ntp_server            = "ntp.tokyo.jito.wtf"
-      jito_block_engine_url = "tokyo.mainnet.block-engine.jito.wtf"
-      use_jito              = true
-    },
-    {
-      label                 = "DK-LN-NYC"
-      group                 = "keeper"
-      image                 = "linode/ubuntu23.10"
-      region                = "us-ord"
-      type                  = "g6-standard-1"
-      ntp_server            = "ntp.ny.jito.wtf"
-      jito_block_engine_url = "ny.mainnet.block-engine.jito.wtf"
-      use_jito              = true
-    }
-  ]
-  instances_digitalocean = [
-    {
-      label                 = "DK-DO-FRA"
-      image                 = "ubuntu-23-10-x64"
-      region                = "fra1"
-      type                  = "s-1vcpu-1gb"
-      ntp_server            = "ntp.frankfurt.jito.wtf"
-      jito_block_engine_url = "frankfurt.mainnet.block-engine.jito.wtf"
-      use_jito              = true
-    },
-    {
-      label                 = "DK-DO-NYC"
-      image                 = "ubuntu-23-10-x64"
-      region                = "nyc1"
-      type                  = "s-1vcpu-1gb"
-      ntp_server            = "ntp.ny.jito.wtf"
-      jito_block_engine_url = "ny.mainnet.block-engine.jito.wtf"
-      use_jito              = true
-    }
-  ]
 }
 
 resource "linode_sshkey" "master" {
@@ -143,7 +46,7 @@ resource "digitalocean_ssh_key" "default" {
 }
 
 resource "linode_instance" "keeper" {
-  for_each        = { for s in local.instances_linode : s.label => s }
+  for_each        = { for s in var.linode_instances : s.label => s }
   label           = each.key
   image           = each.value.image
   group           = each.value.group
@@ -172,7 +75,7 @@ resource "linode_instance" "keeper" {
 }
 
 resource "digitalocean_droplet" "keeper" {
-  for_each = { for s in local.instances_digitalocean : s.label => s }
+  for_each = { for s in var.digitalocean_instances : s.label => s }
   image    = each.value.image
   name     = each.key
   region   = each.value.region
