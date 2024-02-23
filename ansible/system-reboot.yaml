@@ -1,0 +1,6 @@
+- hosts: bots
+  remote_user: root
+  become: true
+  tasks:
+    - name: Reboot
+      reboot:

@@ -31,6 +31,7 @@ ntp:
     - ${ntp_server}
 
 runcmd:
+  - systemctl stop snapd && systemctl disable snapd
   - git clone -b feature/scaling https://github.com/0x1d/drift-keeper /app/bot
   - cp -rT /transfer /app/bot && rm -rf /transfer
   - chown -R keeper:bot /app/bot

@@ -1,11 +1,13 @@
 variable "do_token" {
   description = "DigitalOcean access token"
   type        = string
+  default = ""
 }
 
 variable "linode_token" {
   description = "Linode access token"
   type        = string
+  default = ""
 }
 
 variable "bot" {

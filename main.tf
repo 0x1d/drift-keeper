@@ -19,10 +19,6 @@ provider "linode" {
   token = var.linode_token
 }
 
-
-# Nanode 1 = 1CPU 1GB RAM
-# g6-nanode-1
-
 locals {
   monitoring_config = {
     env = base64encode(templatefile("templates/monitoring/env.monitoring.tpl", var.monitoring))
@@ -33,6 +29,18 @@ locals {
       prometheus_password_bcrypt = bcrypt(var.monitoring.prometheus_password)
     }))
   }
+  cloud_config = { for s in concat(var.linode_instances, var.digitalocean_instances) : s.label => templatefile("cloud-init/cloud-config.yaml", {
+      ntp_server = s.ntp_server
+      env_file = base64encode(templatefile("templates/bot/env.tpl", merge(var.bot, {
+        jito_block_engine_url = s.jito_block_engine_url
+      })))
+      config_file = base64encode(templatefile("templates/bot/config.yaml.tpl", {
+        use_jito = s.use_jito
+      }))
+      env_monitoring_file    = local.monitoring_config.env
+      prometheus_config_file = local.monitoring_config.prometheus
+      prometheus_web_file    = local.monitoring_config.prometheus_web
+    }) }
 }
 
 resource "linode_sshkey" "master" {
@@ -54,18 +62,7 @@ resource "linode_instance" "keeper" {
   type            = each.value.type
   authorized_keys = [linode_sshkey.master.ssh_key]
   metadata {
-    user_data = base64encode(templatefile("cloud-init/cloud-config.yaml", {
-      ntp_server = each.value.ntp_server
-      env_file = base64encode(templatefile("templates/bot/env.tpl", merge(var.bot, {
-        jito_block_engine_url = each.value.jito_block_engine_url
-      })))
-      config_file = base64encode(templatefile("templates/bot/config.yaml.tpl", {
-        use_jito = each.value.use_jito
-      }))
-      env_monitoring_file    = local.monitoring_config.env
-      prometheus_config_file = local.monitoring_config.prometheus
-      prometheus_web_file    = local.monitoring_config.prometheus_web
-    }))
+    user_data = base64encode(local.cloud_config[each.key])
   }
   lifecycle {
     ignore_changes = [
@@ -81,18 +78,7 @@ resource "digitalocean_droplet" "keeper" {
   region   = each.value.region
   size     = each.value.type
   ssh_keys = [digitalocean_ssh_key.default.fingerprint]
-  user_data = templatefile("cloud-init/cloud-config.yaml", {
-    ntp_server = each.value.ntp_server
-    env_file = base64encode(templatefile("templates/bot/env.tpl", merge(var.bot, {
-      jito_block_engine_url = each.value.jito_block_engine_url
-    })))
-    config_file = base64encode(templatefile("templates/bot/config.yaml.tpl", {
-      use_jito = each.value.use_jito
-    }))
-    env_monitoring_file    = local.monitoring_config.env
-    prometheus_config_file = local.monitoring_config.prometheus
-    prometheus_web_file    = local.monitoring_config.prometheus_web
-  })
+  user_data = local.cloud_config[each.key]
   lifecycle {
     ignore_changes = [
       user_data
@@ -105,4 +91,8 @@ output "instances" {
     tomap({ for k, v in linode_instance.keeper : k => v.ip_address }),
     tomap({ for k, v in digitalocean_droplet.keeper : k => v.ipv4_address })
   )
+}
+
+output "configurations" {
+  value = local.cloud_config
 }
