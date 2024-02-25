@@ -32,7 +32,7 @@ It is possible to configure the swap ratio so that you can make profits in both 
 ### Panopticon
 
 This is basically the monitoring stack consisting of a Prometheus and Grafana instance.  
-As every bot is accompanied by a Prometheus instance, the Prometheus of the Panopticon is configured to scrape the `/federate` endpoint of all available instances to centralize all monitoring.
+As every bot is accompanied by a Prometheus instance, the Prometheus of the Panopticon is configured to scrape the `/federate` endpoint of all available instances to centralize monitoring of all servers, bots and wallets.
 
 ## Prerequisites
 

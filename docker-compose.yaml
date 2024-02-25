@@ -1,10 +1,6 @@
 version: '3'
 
 services:
-
-  # ---------------------------------------------------
-  # Bot
-  # ---------------------------------------------------
   keeper:
     image: ${DOCKER_IMAGE}
     restart: unless-stopped
@@ -17,9 +13,6 @@ services:
       context: auto-swap
     env_file: .env.autoswap
     restart: unless-stopped
-  # ---------------------------------------------------
-  # Monitoring
-  # ---------------------------------------------------
   wallet-tracker:
     image: ${DOCKER_IMAGE_WALLET_TRACKER}
     build:
