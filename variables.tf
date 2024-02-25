@@ -1,13 +1,13 @@
 variable "do_token" {
   description = "DigitalOcean access token"
   type        = string
-  default = ""
+  default     = ""
 }
 
 variable "linode_token" {
   description = "Linode access token"
   type        = string
-  default = ""
+  default     = ""
 }
 
 variable "bot" {
@@ -18,6 +18,7 @@ variable "bot" {
     ws_endpoint        = string
     keeper_private_key = string
     jito_private_key   = string
+    docker_image       = string
   })
 }
 

@@ -10,6 +10,30 @@ More information:
 - https://docs.drift.trade/keeper-bots
 - https://docs.drift.trade/tutorial-order-matching-bot
 
+## Components
+
+This repository contains several components to automate and monitor your operation:
+
+- Wallet-Tracker
+- Auto-Swap
+- Panopticon
+
+### Wallet-Tracker
+
+As the name suggests, this component tracks the current SOL and USDC balance of a given wallet, as well as the current SOL price from Jupiter.  
+Everything is conveniently exportes as Prometheus metrics.
+
+### Auto-Swap
+
+The Auto-Swap is resposible of keeping the bot afloat.  
+It periodically checks if a configurable amount of USDC collateral is available on your Drift account. If this amount is reached,it  withdraws all collateral and swaps a configurable portion of the profits to SOL.  
+It is possible to configure the swap ratio so that you can make profits in both SOL and USDC.  
+
+### Panopticon
+
+This is basically the monitoring stack consisting of a Prometheus and Grafana instance.  
+As every bot is accompanied by a Prometheus instance, the Prometheus of the Panopticon is configured to scrape the `/federate` endpoint of all available instances to centralize all monitoring.
+
 ## Prerequisites
 
 - Docker, Docker-Compose
@@ -25,16 +49,11 @@ The account can also be set up using the DEX app: https://app.drift.trade/.
 
 ## Build
 
-Clone the [keeper-bots-v2](https://github.com/drift-labs/keeper-bots-v2/) repository and build the Docker image:
+In order to build all components and push them to the Docker registry, simply run:
 
 ```
-./ctl.sh build keeper
-```
-
-Build the wallet-tracker:
-
-```
-./ctl.sh build tracker
+./ctl.sh build all
+./ctl.sh push all
 ```
 
 ## Run Locally
@@ -44,9 +63,10 @@ Create .env file from example and configure all environment variables.
 ```
 cp example.env .env
 cp example.env.monitoring .env.monitoring
+cp example.env.autoswap .env.autoswap
 ```
 
-Adjust `config.yaml` as you please.
+Adjust `config.yaml` as you please (e.g. configure Jito).  
 Then just run the bot.
 
 ```

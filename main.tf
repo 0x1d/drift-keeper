@@ -30,17 +30,20 @@ locals {
     }))
   }
   cloud_config = { for s in concat(var.linode_instances, var.digitalocean_instances) : s.label => templatefile("cloud-init/cloud-config.yaml", {
-      ntp_server = s.ntp_server
-      env_file = base64encode(templatefile("templates/bot/env.tpl", merge(var.bot, {
-        jito_block_engine_url = s.jito_block_engine_url
-      })))
-      config_file = base64encode(templatefile("templates/bot/config.yaml.tpl", {
-        use_jito = s.use_jito
-      }))
-      env_monitoring_file    = local.monitoring_config.env
-      prometheus_config_file = local.monitoring_config.prometheus
-      prometheus_web_file    = local.monitoring_config.prometheus_web
-    }) }
+    ntp_server = s.ntp_server
+    env_file = base64encode(templatefile("templates/bot/env.tpl", merge(var.bot, {
+      jito_block_engine_url = s.jito_block_engine_url
+    })))
+    config_file = base64encode(templatefile("templates/bot/config.yaml.tpl", {
+      use_jito = s.use_jito
+    }))
+    env_monitoring_file    = local.monitoring_config.env
+    prometheus_config_file = local.monitoring_config.prometheus
+    prometheus_web_file    = local.monitoring_config.prometheus_web
+    docker_compose_file = base64encode(templatefile("templates/bot/docker-compose.yaml.tpl", {
+      docker_image = var.bot.docker_image
+    }))
+  }) }
 }
 
 resource "linode_sshkey" "master" {
@@ -72,12 +75,12 @@ resource "linode_instance" "keeper" {
 }
 
 resource "digitalocean_droplet" "keeper" {
-  for_each = { for s in var.digitalocean_instances : s.label => s }
-  image    = each.value.image
-  name     = each.key
-  region   = each.value.region
-  size     = each.value.type
-  ssh_keys = [digitalocean_ssh_key.default.fingerprint]
+  for_each  = { for s in var.digitalocean_instances : s.label => s }
+  image     = each.value.image
+  name      = each.key
+  region    = each.value.region
+  size      = each.value.type
+  ssh_keys  = [digitalocean_ssh_key.default.fingerprint]
   user_data = local.cloud_config[each.key]
   lifecycle {
     ignore_changes = [

@@ -9,21 +9,25 @@ source .env
 ## Usage: ./ctl.sh COMMAND SUBCOMMAND
 ##
 ## ~> build
+##    all               Build all images
 ##    keeper            Build bot image
 ##    tracker           Build wallet-tracker image
+##    autoswap          Build auto-swap image
 ##
 ## ~> push
+##    all               Push all images to Docker registry
 ##    keeper            Push bot image to Docker registry
 ##    tracker           Push tracker image to Docker registry
+##    autoswap          Push auto-swaü image to Docker registry
 ##
-## ~> run               Run the stack locally
+## ~> run               Run the complete stack locally
 ##
 ## ~> infra
 ##    plan              Plan infrastructure change
 ##    provision         Provision infrastructure
 ##    hosts             Show list of servers
 ##    connect           Connect to a server
-##    playbook          Run a playbook
+##    playbook          Run a maintenance playbook
 ##
 ## ~> balance
 ##    sol               Show SOL balance
@@ -44,6 +48,10 @@ function info {
 }
 
 function build {
+    function all {
+        build keeper
+        build tracker
+    }
     function keeper {
         mkdir -p .build
         git clone https://github.com/drift-labs/keeper-bots-v2 -b mainnet-beta .build/keeper-bots-v2
@@ -55,15 +63,27 @@ function build {
             docker build -t ${DOCKER_IMAGE_WALLET_TRACKER} .
         popd
     }
+    function autoswap {
+        pushd auto-swap
+            docker build -t ${DOCKER_IMAGE_AUTO_SWAP} .
+        popd
+    }
     ${@:-}
 }
 
 function push {
+    function all {
+        push keeper
+        push tracker
+    }
     function keeper {
         docker push ${DOCKER_IMAGE}
     }
     function tracker {
         docker push ${DOCKER_IMAGE_WALLET_TRACKER}
+    }
+    function autoswap {
+        docker push ${DOCKER_IMAGE_AUTO_SWAP}
     }
     ${@:-}
 }

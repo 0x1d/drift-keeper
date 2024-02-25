@@ -11,7 +11,12 @@ services:
     env_file: .env
     volumes:
       - ./config.yaml:/app/config.yaml
-
+  auto-swap:
+    image: ${DOCKER_IMAGE_AUTO_SWAP}
+    build:
+      context: auto-swap
+    env_file: .env.autoswap
+    restart: unless-stopped
   # ---------------------------------------------------
   # Monitoring
   # ---------------------------------------------------

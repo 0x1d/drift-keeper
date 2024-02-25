@@ -4,10 +4,8 @@ in
 { pkgs ? import <nixpkgs> { } }:
 pkgs.mkShell {
   buildInputs = with pkgs; [
-    gnumake
-    dnsutils
-    netcat
     ansible
     terraform
+    solana-cli
   ];
 }
