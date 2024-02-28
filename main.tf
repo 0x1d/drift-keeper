@@ -96,6 +96,24 @@ output "instances" {
   )
 }
 
+
+output "panopticonf" {
+  value = templatefile("templates/monitoring/prometheus/panopticon.yml.tpl", {
+    user = "prom"
+    password = var.monitoring.prometheus_password
+    targets = <<-EOT
+      %{for k, v in merge(
+    tomap({ for k, v in linode_instance.keeper : k => v.ip_address }),
+    tomap({ for k, v in digitalocean_droplet.keeper : k => v.ipv4_address })
+  )}
+          - targets: ['${v}:9090']
+            labels:
+              server: ${k}
+    %{endfor}
+    EOT
+  })
+}
+
 output "configurations" {
   value = local.cloud_config
 }

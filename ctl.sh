@@ -108,7 +108,7 @@ function infra {
     }
     function connect {
         infra hosts \
-        | fzf --height=~10 \
+        | fzf --height=~50 \
         | awk '{print $2}' \
         | xargs -o ssh -l root $@
     }

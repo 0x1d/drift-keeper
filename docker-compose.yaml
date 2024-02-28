@@ -1,6 +1,7 @@
 version: '3'
 
 services:
+
   keeper:
     image: ${DOCKER_IMAGE}
     restart: unless-stopped
@@ -19,6 +20,7 @@ services:
       context: wallet-tracker
     env_file: .env
     restart: unless-stopped
+
   prometheus:
     image: prom/prometheus
     container_name: prometheus

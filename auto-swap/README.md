@@ -1,20 +1,5 @@
 # Auto-Swap
 
-```mermaid
-
-stateDiagram-v2
-    [*] --> checkBalance
-    checkBalance --> checkBalance
-    checkBalance --> thresholdReached
-    thresholdReached --> withdraw
-    withdraw --> withdraw
-    withdraw --> swap
-    swap --> swap
-    swap --> success
-    success --> checkBalance
-
-```
-
 ## Configuration
 
 - PRIVATE_KEY: Either use the PRIVATE_KEY or PRIVATE_KEY_FILE variable to set your Solana private key

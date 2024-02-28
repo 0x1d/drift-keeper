@@ -10,29 +10,89 @@ More information:
 - https://docs.drift.trade/keeper-bots
 - https://docs.drift.trade/tutorial-order-matching-bot
 
+---
+
 ## Components
 
-This repository contains several components to automate and monitor your operation:
+This repository contains several components for automation and monitoring of Drift Keeper bots:
 
+- Keeper Bot
 - Wallet-Tracker
 - Auto-Swap
 - Panopticon
 
+### Keeper-Bot
+
+The Keeper-Bot is the core component of this whole thing.  
+It performs off-chain actions for the Drift Protocol and receives rewards in USDC. A portion of SOL is required to pay for transaction fees.  
+While there are several types of bots for Drift, this repository is focused on order matching a.k.a filler bots that tries to match orders in the decentralized orderbook.  
+This repository only serves as a build and deploy stack for the official bot of this source repository: https://github.com/drift-labs/keeper-bots-v2/.  
+
+```mermaid
+  stateDiagram-v2
+    Terraform --> Linode
+    Terraform --> DigitalOcean
+    Linode --> Keeper_1
+    Linode --> Keeper_2
+    DigitalOcean --> Keeper_3
+    DigitalOcean --> Keeper_4
+```
+
 ### Wallet-Tracker
 
 As the name suggests, this component tracks the current SOL and USDC balance of a given wallet, as well as the current SOL price from Jupiter.  
-Everything is conveniently exportes as Prometheus metrics.
+Everything is conveniently exportes as Prometheus metrics and will be scraped by the `Panopticon`.
+
+
+```mermaid
+  stateDiagram-v2
+    WalletTracker --> Solana
+    WalletTracker --> Jupiter
+    Solana --> USDC_Balance
+    Solana --> SOL_Balance
+    Jupiter --> SOL_Price
+
+```
 
 ### Auto-Swap
 
-The Auto-Swap is resposible of keeping the bot afloat.  
-It periodically checks if a configurable amount of USDC collateral is available on your Drift account. If this amount is reached,it  withdraws all collateral and swaps a configurable portion of the profits to SOL.  
-It is possible to configure the swap ratio so that you can make profits in both SOL and USDC.  
+The Auto-Swap is resposible of keeping the bot afloat by automatically swapping a portion of the profits to SOL in order to pay for transaction fees.    
+It periodically checks if a configurable amount of USDC collateral is available on your Drift account. If this amount is reached,it withdraws all collateral and swaps a configurable portion of the profits to SOL using Jupiter.  
+Altough it is possible to configure the swap ratio so that you can make profits in both SOL and USDC. this only seems to work on "slow days". With crazy market fluctuation and high trading volume, consider that you might pay a lot of fees.  
+
+```mermaid
+  stateDiagram-v2
+    [*] --> checkBalance
+    checkBalance --> checkBalance
+    checkBalance --> thresholdReached
+    thresholdReached --> withdraw
+    withdraw --> withdraw: try 3x
+    withdraw --> swap
+    swap --> swap:  try 3x
+    swap --> success
+    success --> checkBalance
+```
+
 
 ### Panopticon
 
 This is basically the monitoring stack consisting of a Prometheus and Grafana instance.  
 As every bot is accompanied by a Prometheus instance, the Prometheus of the Panopticon is configured to scrape the `/federate` endpoint of all available instances to centralize monitoring of all servers, bots and wallets.
+
+```mermaid
+  stateDiagram-v2
+    Panopticon --> bot1/federate
+    Panopticon --> bot2/federate
+    Panopticon --> bot3/federate
+    Panopticon --> bot4/federate
+    bot1/federate --> Prometheus
+    Prometheus --> NodeExporter
+    Prometheus --> WalletTracker
+    Prometheus --> Keeper
+
+```
+
+---
 
 ## Prerequisites
 
@@ -79,6 +139,7 @@ Provision DigitalOcean and Linode instances using Terraform.
 By default ~/.ssh/id_rsa.pub is added to the root account of each server.
 
 First, create a `values.auto.tfvars` with all your secrets:
+
 ```
 do_token = "your-token"
 linode_token = "your-token"
@@ -145,6 +206,21 @@ Wait until all instances are up and the `instances` output is printed. You may c
 ```
 
 In case somethin went wrong with the provisioning, check the cloud-init-output log at `/var/log/cloud-init-output.log`.
+
+## RPC Providers
+
+In order for Keeper bots to run smoothly, you need to choose a suitable RPC provider that allows all method calls (e.g. getProgramAccounts, etc.).  
+
+Checkout https://solana.com/rpc  
+
+Helius and ExtrNode are quite suitable with reasonable pricing.
+
+## Geo-Locating Nodes
+
+When deploying multiple bots all around the globe, consider placing the machines near your RPC provider and other Solana nodes:
+https://solanacompass.com/statistics/decentralization
+
+Keep in mind, not all Linode datacenters support the `Metadata Service` required to apply the cloud-init config. Check the availability here: https://www.linode.com/docs/products/compute/compute-instances/guides/metadata/#availability
 
 ## Maintenance
 

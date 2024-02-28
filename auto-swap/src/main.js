@@ -21,7 +21,7 @@ const keyPairFile = process.env.PRIVATE_KEY || process.env.PRIVATE_KEY_FILE;
 const wallet = new drift.Wallet(drift.loadKeypair(keyPairFile));
 const connection = new web3.Connection(process.env.RPC_ENDPOINT);
 
-const canSwap = (swapAmount) => swapAmount / USDC_INT > SWAP_THRESHOLD;
+const thresholdReached = (swapAmount) => swapAmount / USDC_INT > SWAP_THRESHOLD;
 
 const driftClient = new drift.DriftClient({
     connection,
@@ -163,7 +163,8 @@ const run = async () => {
             let usdcInAccount = user.getTokenAmount(USDC_MARKET);
             let swapAmount = Math.floor(calcSwapAmount(usdcInAccount));
 
-            if (canSwap(swapAmount)) {
+            if (thresholdReached(swapAmount)) {
+                // TODO move that check to the top
                 if (!swapInProgress) {
 
                     log('---------------------------------')
@@ -171,34 +172,45 @@ const run = async () => {
                     swapInProgress = true;
 
                     let withdrawSuccessful = false;
-                    while (!withdrawSuccessful) {
+                    let withdrawRetries = 0;
+                    let maxWithdrawRetries = 3;
+                    while (!withdrawSuccessful && withdrawRetries < maxWithdrawRetries) {
                         log(`Withdraw from exchange`);
                         await withdraw(USDC_MARKET, quoteNumber(user.getTokenAmount(USDC_MARKET)))
                             .then(async (txSig) => {
                                 log(`Confirm withdraw: https://solscan.io/tx/${txSig}`);
                                 return confirmTx(txSig);
                             }, (error) => {
-                                //swapInProgress = false;
                                 throw `Withdraw TX failed: ${error}`;
                             })
                             .then((confirmResult) => {
                                 if (confirmResult.value.err) {
-                                    //swapInProgress = false;
-                                    //throw `Withdraw not confirmed`;
-                                    log(`Withdraw not confirmed`);
+                                    throw `Withdraw not confirmed`;
                                 } else {
                                     log(`Withdraw confirmed`);
                                     withdrawSuccessful = true;
                                 }
                             })
                             .catch(error => {
-                                //throw `Withdraw failed: ${error}`;
-                                log(`Withdraw failed: ${error}`);
+                                withdrawRetries++;
+                                log(`Withdraw failed (${withdrawRetries}/${maxWithdrawRetries}): ${error}`);
+                                // TODO check if withdraw was still somehow successfull
+                                // it sometimes happens and we're then stuck in the loop
                             });
                     }
 
+                    //backoff & try again in next iteration
+                    if(withdrawRetries === maxWithdrawRetries) {
+                        log('Withdraw failed - backoff & try again in next iteration');
+                        swapInProgress = false;
+                        return;
+                    }
+
                     let swapSuccessful = false
-                    while (!swapSuccessful) {
+                    let swapRetries = 0;
+                    let maxSwapRetries = 3;
+                    while (!swapSuccessful && swapRetries < maxSwapRetries) {
+                        // TODO calculate fresh swapAmount every iteration as collateral may has increased in the mean time
                         await quoteUsdcSol(swapAmount)
                             .then(quote => {
                                 log(`Swap: ${swapAmount / USDC_INT}$ to ${quote.outAmount / LAMPORTS_PER_SOL} SOL`);
@@ -210,7 +222,7 @@ const run = async () => {
                             })
                             .then(confirmResult => {
                                 if (confirmResult.value.err) {
-                                    log(`Confirm swap failed ${confirmResult.value.err}`);
+                                    throw `Confirm swap failed ${confirmResult.value.err}`;
                                 } else {
                                     log('Swap successful')
                                     log('---------------------------------')
@@ -219,10 +231,17 @@ const run = async () => {
                                 }
                             })
                             .catch(error => {
-                                log(`FAAAAAIL: ${error}`)
-                                //swapInProgress = false;
+                                swapRetries++;
+                                log(`FAAAAAIL (${swapRetries}/${maxSwapRetries}): ${error}`);
                             })
                         sleep(1000);
+                    }
+
+                    //backoff & try again in next iteration
+                    if(swapRetries === maxSwapRetries) {
+                        log('Swap failed - backoff & try again in next iteration');
+                        swapInProgress = false;
+                        return;
                     }
 
                 } else {
