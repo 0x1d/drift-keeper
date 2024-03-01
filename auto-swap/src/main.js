@@ -159,14 +159,12 @@ const run = async () => {
     let swapInProgress = false;
 
     setInterval(async () => {
-        try {
-            let usdcInAccount = user.getTokenAmount(USDC_MARKET);
-            let swapAmount = Math.floor(calcSwapAmount(usdcInAccount));
+        if (!swapInProgress) {
+            try {
+                let usdcInAccount = user.getTokenAmount(USDC_MARKET);
+                let swapAmount = Math.floor(calcSwapAmount(usdcInAccount));
 
-            if (thresholdReached(swapAmount)) {
-                // TODO move that check to the top
-                if (!swapInProgress) {
-
+                if (thresholdReached(swapAmount)) {
                     log('---------------------------------')
                     printInfo(user);
                     swapInProgress = true;
@@ -200,10 +198,16 @@ const run = async () => {
                     }
 
                     //backoff & try again in next iteration
-                    if(withdrawRetries === maxWithdrawRetries) {
-                        log('Withdraw failed - backoff & try again in next iteration');
-                        swapInProgress = false;
-                        return;
+                    if (withdrawRetries === maxWithdrawRetries) {
+                        log('Withdraw failed - check if account balance changed and the withdraw actualy did not fail');
+                        let currentUsdcInAccount = user.getTokenAmount(USDC_MARKET);
+                        if(currentUsdcInAccount < usdcInAccount) {
+                            log('Withdraw seemed to went through - continue with swap');
+                        } else {
+                            log('Withdraw really failed - backoff & try again in next iteration');
+                            swapInProgress = false;
+                            return;
+                        }
                     }
 
                     let swapSuccessful = false
@@ -238,23 +242,24 @@ const run = async () => {
                     }
 
                     //backoff & try again in next iteration
-                    if(swapRetries === maxSwapRetries) {
+                    if (swapRetries === maxSwapRetries) {
                         log('Swap failed - backoff & try again in next iteration');
                         swapInProgress = false;
                         return;
                     }
 
-                } else {
-                    log('Swap in progress')
-                }
 
-            } else {
-                log(`Waiting to reach threshold - current balance on DEX: ${usdcInAccount / USDC_INT} USDC`);
+
+                } else {
+                    log(`Waiting to reach threshold - current balance on DEX: ${usdcInAccount / USDC_INT} USDC`);
+                    swapInProgress = false;
+                }
+            } catch (error) {
+                log(error);
                 swapInProgress = false;
             }
-        } catch (error) {
-            log(error);
-            swapInProgress = false;
+        } else {
+            log('Swap in progress')
         }
     }, AUTOSWAP_INTERVAL);
 
