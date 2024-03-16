@@ -2,7 +2,7 @@
 
 > Keeper Bots in the Drift Protocol keep the protocol operational by performing automated actions as autonomous off-chain agents. Keepers are rewarded depending on the duties that they perform.
 
-This repository contains tools to build, run and monitor Keeper bots for Drift on Solana.  
+This repository contains tools to build, run and monitor Drift Keeper bots on Solana.  
 Checkout my article about all that stuff: https://nitro.dcentral.systems/drift-keeper-bot  
   
 More information:
@@ -40,7 +40,7 @@ This repository only serves as a build and deploy stack for the official bot of 
 
 ### Wallet-Tracker
 
-As the name suggests, this component tracks the current SOL and USDC balance of a given wallet, as well as the current SOL price from Jupiter.  
+As the name suggests, this component tracks the current SOL and USDC onchain balance of a given wallet, as well as the current SOL price from Jupiter.  
 Everything is conveniently exportes as Prometheus metrics and will be scraped by the `Panopticon`.
 
 
@@ -63,16 +63,16 @@ Altough it is possible to configure the swap ratio so that you can make profits 
 ```mermaid
   stateDiagram-v2
     [*] --> checkBalance
-    checkBalance --> checkBalance
-    checkBalance --> thresholdReached
-    thresholdReached --> withdraw
+    checkBalance --> [*]:threshold\nnot reached
+    checkBalance --> withdraw: threshold\nreached
     withdraw --> withdraw: try 3x
+    withdraw --> [*]: backoff
     withdraw --> swap
     swap --> swap:  try 3x
-    swap --> success
-    success --> checkBalance
+    swap --> [*]
 ```
 
+Known problem: when Solana is congested, the autoswap routine fails a lot, as the `withdraw` method seems to be somehow unstable.
 
 ### Panopticon
 
@@ -81,14 +81,10 @@ As every bot is accompanied by a Prometheus instance, the Prometheus of the Pano
 
 ```mermaid
   stateDiagram-v2
-    Panopticon --> bot1/federate
-    Panopticon --> bot2/federate
-    Panopticon --> bot3/federate
-    Panopticon --> bot4/federate
-    bot1/federate --> Prometheus
-    Prometheus --> NodeExporter
-    Prometheus --> WalletTracker
-    Prometheus --> Keeper
+    Panopticon --> WalletTracker
+    Panopticon --> /federate
+    /federate --> NodeExporter
+    /federate --> Keeper
 
 ```
 

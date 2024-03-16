@@ -56,7 +56,7 @@ global:
   eventSubscriberPollingInterval: 5000
   bulkAccountLoaderPollingInterval: 5000
 
-  useJito: false
+  useJito: true
   jitoBlockEngineUrl:
   jitoAuthPrivateKey:
 

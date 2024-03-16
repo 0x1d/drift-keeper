@@ -145,6 +145,44 @@ const confirmTx = async (txSig) => {
     }, 'confirmed');
 };
 
+const run2 = async () => {
+
+    await driftClient.subscribe();
+    const user = driftClient.getUser();
+    
+    // force markets to be included
+    driftClient.perpMarketLastSlotCache.set(SOL_MARKET, Number.MAX_SAFE_INTEGER);
+    driftClient.perpMarketLastSlotCache.set(USDC_MARKET, Number.MAX_SAFE_INTEGER);
+
+    log('---------------------------------')
+    log("DriftClient initialized")
+    log(`Swap Ratio: ${SWAP_RATIO}`);
+    log(`Swap Threshold: ${SWAP_THRESHOLD} USDC`);
+    printInfo(user);
+
+    let swapInProgress = false;
+
+    let lastUsdcInAccount = await connection.getBalance(publicKey);
+    let lastSolInWallet = await getWalletBalance(connection, wallet.publicKey);
+
+    setInterval(async () => {
+        if (!swapInProgress) {
+            let currentUsdcInAccount = await connection.getBalance(publicKey);
+            let currentSolInWallet = await getWalletBalance(connection, wallet.publicKey);
+
+            let differenceSol = lastSolInWallet - currentSolInWallet;
+            let differenceUsdc = currentUsdcInAccount - lastUsdcInAccount;
+
+            await quoteUsdcSol(differenceUsdc)
+                .then(quote => {
+                    log(`Swap: ${differenceUsdc / USDC_INT}$ to ${quote.outAmount / LAMPORTS_PER_SOL} SOL`);
+                    //return signAndSendTx(quote);
+                })
+            lastUsdcInAccount = currentUsdcInAccount;
+        }
+    }, AUTOSWAP_INTERVAL);
+};
+
 const run = async () => {
 
     await driftClient.subscribe();
@@ -269,4 +307,4 @@ const run = async () => {
 
 };
 
-run();
+run2();

@@ -20,7 +20,9 @@ source .env
 ##    tracker           Push tracker image to Docker registry
 ##    autoswap          Push auto-swaü image to Docker registry
 ##
-## ~> run               Run the complete stack locally
+## ~> run
+##    all               Run the complete stack locally
+##    autoswap          Run Auto-Swap locally
 ##
 ## ~> infra
 ##    plan              Plan infrastructure change
@@ -89,7 +91,15 @@ function push {
 }
 
 function run {
-    docker compose up
+    function all {
+        docker compose up
+    }
+    function autoswap {
+        pushd auto-swap
+            npm start
+        popd
+    }
+    ${@:-}
 }
 
 function infra {
