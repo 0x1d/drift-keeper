@@ -19,6 +19,7 @@ variable "bot" {
     keeper_private_key = string
     jito_private_key   = string
     docker_image       = string
+    docker_image_wallet_tracker = string
   })
 }
 

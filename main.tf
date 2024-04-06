@@ -42,6 +42,7 @@ locals {
     prometheus_web_file    = local.monitoring_config.prometheus_web
     docker_compose_file = base64encode(templatefile("templates/bot/docker-compose.yaml.tpl", {
       docker_image = var.bot.docker_image
+      docker_image_wallet_tracker = var.bot.docker_image_wallet_tracker
     }))
   }) }
 }
