@@ -13,6 +13,10 @@ services:
       context: wallet-tracker
     env_file: .env
     restart: unless-stopped
+  user-metrics:
+    image: wirelos/user-metrics:0.1.0
+    env_file: .env
+    restart: unless-stopped
 
   prometheus:
     image: prom/prometheus

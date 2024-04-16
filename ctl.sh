@@ -57,6 +57,9 @@ function build {
     function keeper {
         mkdir -p .build
         git clone https://github.com/drift-labs/keeper-bots-v2 -b mainnet-beta .build/keeper-bots-v2
+        #pushd .build/keeper-bots-v2
+        #    git checkout 21fd791d142490fe033b5e25719927c106a0aaf2
+        #popd
         docker build -f Dockerfile -t ${DOCKER_IMAGE} .build/keeper-bots-v2
         rm -rf .build
     }
@@ -68,6 +71,11 @@ function build {
     function autoswap {
         pushd auto-swap
             docker build -t ${DOCKER_IMAGE_AUTO_SWAP} .
+        popd
+    }
+    function metrics {
+        pushd user-metrics
+            docker build -t ${DOCKER_IMAGE_USER_METRICS} .
         popd
     }
     ${@:-}
@@ -87,6 +95,9 @@ function push {
     function autoswap {
         docker push ${DOCKER_IMAGE_AUTO_SWAP}
     }
+    function metrics {
+        docker push ${DOCKER_IMAGE_USER_METRICS}
+    }    
     ${@:-}
 }
 
@@ -96,6 +107,11 @@ function run {
     }
     function autoswap {
         pushd auto-swap
+            npm start
+        popd
+    }
+    function metircs {
+        pushd user-metrics
             npm start
         popd
     }
