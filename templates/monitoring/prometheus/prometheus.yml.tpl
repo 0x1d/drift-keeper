@@ -31,3 +31,12 @@ scrape_configs:
   static_configs:
   - targets:
     - wallet-tracker:3000
+- job_name: user
+  honor_timestamps: true
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  metrics_path: /metrics
+  scheme: http
+  static_configs:
+  - targets:
+    - user-metrics:3000    

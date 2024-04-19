@@ -18,6 +18,7 @@ This repository contains several components for automation and monitoring of Dri
 
 - Keeper Bot
 - Wallet-Tracker
+- User-Tracker
 - Auto-Swap
 - Panopticon
 
@@ -51,6 +52,22 @@ Everything is conveniently exportes as Prometheus metrics and will be scraped by
     Solana --> USDC_Balance
     Solana --> SOL_Balance
     Jupiter --> SOL_Price
+
+```
+
+### User-Tracker
+
+This component tracks the current SOL and USDC balance in the wallet as well as total collateral and unrealized PNL on Drift.
+
+
+```mermaid
+  stateDiagram-v2
+    UserTracker --> Solana
+    UserTracker --> Drift
+    Solana --> USDC_Balance
+    Solana --> SOL_Balance
+    Drift --> Total_Collateral
+    Drift --> Unrealized_PNL
 
 ```
 
@@ -120,6 +137,7 @@ Create .env file from example and configure all environment variables.
 cp example.env .env
 cp example.env.monitoring .env.monitoring
 cp example.env.autoswap .env.autoswap
+cp example.env.user-metrics .env.user-metrics
 ```
 
 Adjust `config.yaml` as you please (e.g. configure Jito).  
@@ -181,7 +199,7 @@ digitalocean_instances = [
 ]
 ```
 
-If no custom instances are provided, the default set from `instances.tf` will be used:
+If no custom instances are provided, the default set from `variables.tf` will be used:
 - Linode g6-nanode-1 in Amsterdam (NL)
 - Linode g6-nanode-1 in Osaka (JP)
 - DigitalOcean s-1vcpu-1gb in Frankfurt (DE)
@@ -231,6 +249,7 @@ There are several Ansible playbooks to maintain the servers and the app that can
 There are several metrics endpoints available that are periodically scraped by Prometheus:
 - http://keeper:9464/metrics
 - http://wallet-tracker:3000/metrics
+- http://user-tracker:3000/metrics
 - http://node-exporter:9100/metrics
 
 A Grafana dashboard is exposed on http://localhost:3000 with default username/password: admin/grafana.
