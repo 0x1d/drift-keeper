@@ -1,0 +1,9 @@
+- hosts: bots
+  remote_user: root
+  become: true
+  tasks:
+    - name: Reset Containers
+      shell: |
+        cd /app/bot
+        docker-compose down -v
+        sudo -u keeper -g bot -- docker-compose up -d

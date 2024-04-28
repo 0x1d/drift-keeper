@@ -1,5 +1,5 @@
 # Bot
-.env
+.env*
 .build/
 
 # Terraform
@@ -7,3 +7,6 @@
 terraform.tfstate
 terraform.tfstate.backup
 values.auto.tfvars
+
+# Ansible
+inventory.cfg

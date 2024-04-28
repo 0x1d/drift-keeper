@@ -13,23 +13,28 @@ const createMetrics = () => {
         help: "USDC Balance",
         labelNames: ['wallet','walletShort']
     });
-    const solUsdcBalanceMetric = new client.Gauge({
-        name: "sol_usdc_balance",
-        help: "SOL Balance in USDC",
+    const totalCollateralMetric = new client.Gauge({
+        name: "total_collateral",
+        help: "Total Collateral",
         labelNames: ['wallet','walletShort']
     });
-
-    const solPriceMetric = new client.Gauge({
-        name: "sol_price",
-        help: "SOL Price in USDC"
+    const unrealizedPNLMetric = new client.Gauge({
+        name: "unrealized_pnl",
+        help: "Unrealized PNL",
+        labelNames: ['wallet','walletShort']
     });
 
     registry.registerMetric(usdcBalanceMetric);
     registry.registerMetric(solBalanceMetric);
-    registry.registerMetric(solUsdcBalanceMetric);
-    registry.registerMetric(solPriceMetric);
+    registry.registerMetric(totalCollateralMetric);
+    registry.registerMetric(unrealizedPNLMetric);
 
-    return [registry, usdcBalanceMetric, solBalanceMetric, solUsdcBalanceMetric, solPriceMetric];
+    return [registry, {
+        usdcBalance: usdcBalanceMetric, 
+        solBalance: solBalanceMetric,
+        totalCollateral: totalCollateralMetric,
+        unrealizedPNL: unrealizedPNLMetric
+    }];
 };
 
 module.exports = {

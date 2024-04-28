@@ -1,28 +1,21 @@
 version: '3'
 
 services:
-
   keeper:
-    image: ${DOCKER_IMAGE}
+    image: ${docker_image}
     restart: unless-stopped
     env_file: .env
     volumes:
       - ./config.yaml:/app/config.yaml
-  auto-swap:
-    image: ${DOCKER_IMAGE_AUTO_SWAP}
-    build:
-      context: auto-swap
-    env_file: .env.autoswap
-    restart: unless-stopped
   wallet-tracker:
-    image: ${DOCKER_IMAGE_WALLET_TRACKER}
+    image: ${docker_image_wallet_tracker}
     build:
       context: wallet-tracker
     env_file: .env
     restart: unless-stopped
   user-metrics:
     image: wirelos/user-metrics:0.1.0
-    env_file: .env.user-metrics
+    env_file: .env
     restart: unless-stopped
 
   prometheus:

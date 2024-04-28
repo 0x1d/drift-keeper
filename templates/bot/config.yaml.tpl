@@ -21,6 +21,11 @@ global:
   # helius: uses https://docs.helius.dev/solana-rpc-nodes/alpha-priority-fee-api
   priorityFeeMethod: solana
 
+  # skips preflight checks on sendTransaciton, default is false.
+  # this will speed up tx sending, but may increase SOL paid due to failed txs landing
+  # on chain
+  txSkipPreflight: false
+
   # max priority fee to use, in micro lamports
   # i.e. a fill that uses 500_000 CUs will spend:
   # 500_000 * 10_000 * 1e-6 * 1e-9 = 0.000005 SOL on priority fees
@@ -56,7 +61,22 @@ global:
   eventSubscriberPollingInterval: 5000
   bulkAccountLoaderPollingInterval: 5000
 
-  useJito: true
+  useJito: ${use_jito}
+  # one of: ['non-jito-only', 'jito-only', 'hybrid'].
+  # * non-jito-only: will only send txs to RPC when there is no active jito leader
+  # * jito-only: will only send txs via bundle when there is an active jito leader
+  # * hybrid: will attempt to send bundles when active jito leader, and use RPC when not
+  # hybrid may not work well if using high throughput bots such as a filler depending on infra limitations.
+  jitoStrategy: jito-only
+  # the minimum tip to pay
+  jitoMinBundleTip: 10000
+  # the maximum tip to pay (will pay this once jitoMaxBundleFailCount is hit)
+  jitoMaxBundleTip: 100000
+  # the number of failed bundles (accepted but not landed) before tipping the max tip
+  jitoMaxBundleFailCount: 200
+  # the tip multiplier to use when tipping the max tip
+  # controls superlinearity (1 = linear, 2 = slightly-superlinear, 3 = more-superlinear, ...)
+  jitoTipMultiplier: 3
   jitoBlockEngineUrl:
   jitoAuthPrivateKey:
 

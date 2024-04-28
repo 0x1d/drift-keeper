@@ -1,0 +1,4 @@
+basic_auth_users:
+    # bcrypt "prompass"
+    # e.g. htpasswd -bnBC 10 "" prompass | tr -d ':\n'
+    prom: $2y$10$oWtHm79bh0D1CnNC4brGiOU7y6MbYa6cgklF/g6ek9YZYkgXfeOIu

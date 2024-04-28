@@ -13,18 +13,6 @@ scrape_configs:
 - job_name: node
   static_configs:
   - targets: ['node-exporter:9100']
-- job_name: wallet
-  scrape_interval: 60s
-  metrics_path: /metrics
-  static_configs:
-  - targets: 
-    - wallet-tracker:3000
-- job_name: user
-  scrape_interval: 60s
-  metrics_path: /metrics
-  static_configs:
-  - targets: 
-    - user-metrics:3000    
 - job_name: keeper
   honor_timestamps: true
   scrape_interval: 15s
@@ -34,3 +22,21 @@ scrape_configs:
   static_configs:
   - targets:
     - keeper:9464
+- job_name: wallet
+  honor_timestamps: true
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  metrics_path: /metrics/${wallet_address}
+  scheme: http
+  static_configs:
+  - targets:
+    - wallet-tracker:3000
+- job_name: user
+  honor_timestamps: true
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  metrics_path: /metrics
+  scheme: http
+  static_configs:
+  - targets:
+    - user-metrics:3000    
