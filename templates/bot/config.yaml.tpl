@@ -43,7 +43,7 @@ global:
   # end after the deposit transaction is sent
   #forceDeposit: 1000
 
-  websocket: false  # use websocket for account loading and events (limited support)
+  websocket: true  # use websocket for account loading and events (limited support)
   eventSubscriber: false # disables event subscriber (heavy RPC demand), this is primary used for counting fills
   runOnce: false # Set true to run once and exit, useful for testing or one off bot runs
   debug: false # Enable debug logging

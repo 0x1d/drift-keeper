@@ -43,26 +43,11 @@ write_files:
     owner: root:root
     permissions: '0750'
     content: ${env_file}
-  - path: /transfer/.env.monitoring
-    encoding: b64
-    owner: root:root
-    permissions: '0750'
-    content: ${env_monitoring_file}    
   - path: /transfer/config.yaml
     encoding: b64
     owner: root:root
     permissions: '0750'
     content: ${config_file}
-  - path: /transfer/prometheus/prometheus.yml
-    encoding: b64
-    owner: root:root
-    permissions: '0750'
-    content: ${prometheus_config_file}
-  - path: /transfer/prometheus/web.yml
-    encoding: b64
-    owner: root:root
-    permissions: '0750'
-    content: ${prometheus_web_file}
   - path: /transfer/docker-compose.yaml
     encoding: b64
     owner: root:root

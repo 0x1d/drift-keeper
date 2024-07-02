@@ -1,4 +1,9 @@
 terraform {
+  backend "consul" {
+    address = "sophon:8500"
+    scheme  = "http"
+    path    = "terraform/drift-keeper"
+  }
   required_providers {
     linode = {
       source  = "linode/linode"
@@ -29,7 +34,7 @@ locals {
       prometheus_password_bcrypt = bcrypt(var.monitoring.prometheus_password)
     }))
   }
-  cloud_config = { for s in concat(var.linode_instances, var.digitalocean_instances) : s.label => templatefile("cloud-init/cloud-config.yaml", {
+  cloud_config = { for s in concat(var.linode_instances, var.digitalocean_instances) : s.label => templatefile("cloud-init/cloud-config-small.yaml", {
     ntp_server = s.ntp_server
     env_file = base64encode(templatefile("templates/bot/env.tpl", merge(var.bot, {
       jito_block_engine_url = s.jito_block_engine_url
