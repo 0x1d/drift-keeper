@@ -15,7 +15,7 @@ app.get('/metrics/:addr?', async (req, res) => {
     console.log(`Gathering metrics for ${walletAddress}`);
     res.setHeader('Content-Type', registry.contentType);
     
-    registry.resetMetrics();
+    //registry.resetMetrics();
 
     let [solBalance, usdcBalance, marketData] = await Promise.all([
         loadWalletBalance(walletAddress),
@@ -26,8 +26,11 @@ app.get('/metrics/:addr?', async (req, res) => {
 
     solBalanceMetric.set(label, extractWalletBalance(solBalance));
     usdcBalanceMetric.set(label, extractUSDCBalance(usdcBalance));
-    solUsdcBalanceMetric.set(label, extractWalletBalance(solBalance) * extractSOLPrice(marketData));
-    solPriceMetric.set(extractSOLPrice(marketData));
+    let solPrice = extractSOLPrice(marketData);
+    if(solPrice){
+        solUsdcBalanceMetric.set(label, extractWalletBalance(solBalance) * solPrice);
+        solPriceMetric.set(solPrice);
+    }
 
     res.send(await registry.metrics());
 });

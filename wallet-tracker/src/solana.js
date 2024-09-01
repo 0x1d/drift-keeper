@@ -59,7 +59,7 @@ function extractUSDCBalance(usdcBalance) {
 
 // extract SOL price
 function extractSOLPrice(marketData) {
-    return marketData.data.SOL.price;
+    return marketData.data?.SOL?.price;
 }
 
 // export functions
