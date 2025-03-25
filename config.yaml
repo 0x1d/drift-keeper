@@ -38,7 +38,7 @@ global:
   # end after the deposit transaction is sent
   #forceDeposit: 1000
 
-  websocket: false  # use websocket for account loading and events (limited support)
+  websocket: true  # use websocket for account loading and events (limited support)
   eventSubscriber: false # disables event subscriber (heavy RPC demand), this is primary used for counting fills
   runOnce: false # Set true to run once and exit, useful for testing or one off bot runs
   debug: false # Enable debug logging
@@ -56,7 +56,8 @@ global:
   eventSubscriberPollingInterval: 5000
   bulkAccountLoaderPollingInterval: 5000
 
-  useJito: false
+  useJito: true
+  jitoStrategy: hybrid
   jitoBlockEngineUrl:
   jitoAuthPrivateKey:
 
@@ -71,13 +72,13 @@ global:
 # Bot specific configs are below
 enabledBots:
   # Perp order filler bot
-  - fillerLite
+  - filler
 
   # Spot order filler bot
-  #- spotFiller
+  - spotFiller
 
   # Trigger bot (triggers trigger orders)
-  #- trigger
+  - trigger
   
   # Liquidator bot, liquidates unhealthy positions by taking over the risk (caution, you should manage risk here)
   # - liquidator
@@ -185,7 +186,7 @@ botConfigs:
   trigger:
     botId: "trigger"
     dryRun: false
-    metricsPort: 9465
+    metricsPort: 9466
 
   markTwapCrank:
     botId: "mark-twap-cranker"
