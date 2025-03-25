@@ -56,11 +56,11 @@ function build {
     }
     function keeper {
         mkdir -p .build
-        git clone https://github.com/drift-labs/keeper-bots-v2 -b mainnet-beta .build/keeper-bots-v2
+        git clone https://github.com/drift-labs/keeper-bots-v2 -b mainnet-beta --recurse-submodules .build/keeper-bots-v2
         #pushd .build/keeper-bots-v2
         #    git checkout 21fd791d142490fe033b5e25719927c106a0aaf2
         #popd
-        docker build -f Dockerfile -t ${DOCKER_IMAGE} .build/keeper-bots-v2
+        docker build -t ${DOCKER_IMAGE} .build/keeper-bots-v2
         rm -rf .build
     }
     function tracker {
@@ -104,6 +104,9 @@ function push {
 function run {
     function all {
         docker compose up
+    }
+    function keeper {
+        docker compose up keeper
     }
     function autoswap {
         pushd auto-swap

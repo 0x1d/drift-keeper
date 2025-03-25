@@ -6,6 +6,7 @@ services:
     image: ${DOCKER_IMAGE}
     restart: unless-stopped
     env_file: .env
+    command: "node ./lib/index.js --config-file=/app/config.yaml"
     volumes:
       - ./config.yaml:/app/config.yaml
   auto-swap:
